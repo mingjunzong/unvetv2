@@ -1,0 +1,53 @@
+# U-Net v2 / PolypSeg 路线的最小依赖清单
+#
+# 【重要】仓库根目录那个 requirements.txt 是作者从自己环境 pip freeze 出来的，
+# 千万不要直接 pip install -r requirements.txt：
+#   1) mmcv_full==1.2.7 + mmdet==3.1.0 + mmseg==1.3.0 三者互相冲突（mmdet 3.x 要 mmcv 2.x），
+#      在 Windows 上基本编不过；而且它们只被 poolformer.py / UNeXt/archs.py 用到，
+#      跟 U-Net v2 一点关系都没有
+#   2) 有重复条目：Pillow 9.3.0 和 10.0.0、PyYAML 三个版本、SimpleITK 两个版本
+#   3) 里面一半的包（batchgenerators / acvl_utils / SimpleITK / monai / MedPy / hiddenlayer …）
+#      只有 nnUNet 那半边用得到，跑息肉这条线完全不需要
+#
+# ---------------------------------------------------------------------------
+# 环境：Python 3.10（不要用 3.12/3.13，requirements 是 3.8~3.10 时代的）
+#
+# 第 1 步：先装 CUDA 版 torch（注意必须走官方 cu 索引，别用 CPU 版）
+#     pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
+#   或者 cu124 / cu126 都行，RTX 3090 是 sm_86，CUDA >= 11.1 都可以
+#
+# 第 2 步：装本清单
+#     pip install -r requirements_min.txt
+#
+# 第 3 步：验证（必须有输出 True + 显卡名）
+#     python -c "import torch;print(torch.__version__, torch.cuda.is_available(), torch.cuda.get_device_name(0))"
+#     python smoke_test.py        # 不需要数据集，看到 SMOKE TEST PASSED 就成
+# ---------------------------------------------------------------------------
+
+# 主干网络 PVTv2 用到 DropPath / trunc_normal_ / register_model
+# 0.9.5 是实测通过的版本；代码已经改成兼容 timm 1.x，装更新版也行
+timm==0.9.5
+
+# 训练/测试脚本打印指标表格用
+tabulate
+
+# Test.py 保存预测 mask 用
+# 【无桌面的服务器/容器】请用 headless 版，否则 import cv2 会报
+#   ImportError: libGL.so.1: cannot open shared object file
+# （有桌面的机器装普通版即可；也可以 apt-get install -y libgl1 libglib2.0-0 解决）
+opencv-python
+
+# 读图（torchvision 也依赖它）
+Pillow
+
+# 指标计算
+numpy
+
+# ---------------------------------------------------------------------------
+# 明确【不需要】装的：
+#   thop        —— 只有 CalParams 用，已改成函数内延迟导入
+#   wandb       —— 默认关闭，可用 --wandb 打开（那时才需要装）
+#   scipy       —— 只有没被用到的 lib/eval.py、lib/eval_functions.py 需要
+#   matplotlib  —— 只有原版被注释掉的 plot_train 用
+#   tqdm        —— 脚本里没用
+# ---------------------------------------------------------------------------

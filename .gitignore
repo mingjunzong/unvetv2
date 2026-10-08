@@ -1,0 +1,61 @@
+# ===== 论文 PDF（版权文件，不上传）=====
+*.pdf
+
+# ===== 数据集（体积过大，用 README 中的 Google Drive 链接获取）=====
+CVC-ClinicDB/
+data/
+datasets/
+nnUNet_raw/
+nnUNet_preprocessed/
+nnUNet_results/
+
+# ===== 训练日志、输出与临时文件 =====
+*.log
+*_log.txt
+tmp/
+_temp*/
+__tmp__/
+
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+build/
+dist/
+*.egg-info/
+.eggs/
+venv/
+.venv/
+env/
+ENV/
+
+# ===== PyTorch / 模型权重 =====
+# .pth 走 Git LFS（见 .gitattributes），其余权重格式一律排除
+*.pt
+*.ckpt
+*.tar
+*.tar.gz
+*.zip
+*.npy
+*.npz
+*.pkl
+*.h5
+
+# ===== IDE / 编辑器 =====
+.idea/
+.vscode/
+*.iml
+*.swp
+
+# ===== Jupyter =====
+.ipynb_checkpoints/
+
+# ===== 操作系统 =====
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===== 其他 =====
+*.bak
+*.orig
